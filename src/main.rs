@@ -5,7 +5,7 @@ mod player;
 mod probability;
 use cursor_consts::{CLEAR, COLOUR_RESET, DOORMOJI, GREEN, HOME, RED, SKULL};
 
-use crate::input::take_input;
+use crate::input::game_loop;
 use door::Doorgeon;
 use player::Player;
 
@@ -39,7 +39,7 @@ fn main() {
     let mut player: Player = Player::new();
 
     doorgeon.populate();
-    take_input(doorgeon, &mut player);
+    game_loop(doorgeon, &mut player);
 
     println!(
         "\n{GREEN}DOORSCORE: {0}, CLEARED: {1}{SKULL}{COLOUR_RESET}\n",

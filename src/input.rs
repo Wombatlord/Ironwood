@@ -4,7 +4,7 @@ use crate::player::Player;
 use crate::probability::{barz, game_length_chance_percent, map_range};
 use std::io;
 
-pub fn take_input(mut doorgeon: Doorgeon, player: &mut Player) {
+pub fn game_loop(mut doorgeon: Doorgeon, player: &mut Player) -> () {
     // The Game Loop
     loop {
         let mut input: String = String::new();
@@ -15,7 +15,7 @@ pub fn take_input(mut doorgeon: Doorgeon, player: &mut Player) {
         }
 
         match io::stdin().read_line(&mut input) {
-            Ok(_) => {}
+            Ok(_) => (),
             Err(e) => panic!("Failed to read input: {e}"),
         };
 
@@ -28,11 +28,9 @@ pub fn take_input(mut doorgeon: Doorgeon, player: &mut Player) {
         
         if chance[0].trim() == "chance" {
             let bars: Vec<String> = (safe_doors.0..=safe_doors.1 + safe_doors.0)
-                .map(|x| game_length_chance_percent(x, safe_doors.0))
-                .into_iter()
-                .map(|x| map_range(100.0, (0.0, 50.0), x, Some(1.0)))
-                .into_iter()
-                .map(|(x, y)| barz(x, y))
+                .map(|i| game_length_chance_percent(i, safe_doors.0))
+                .map(|pct| map_range(100.0, (0.0, 50.0), pct, Some(1.0)))
+                .map(|(range, pct)| barz(range, pct))
                 .collect();
             print!("\x1b[2A");
             print!("\x1b[0K");
@@ -77,8 +75,14 @@ fn chance_args_as_usize_tuple(chance: &Vec<&str>) -> (usize, usize) {
 }
 
 fn doors_only(chance: &Vec<&str>) -> (usize, usize) {
-    let given_doors = chance[1].trim().parse::<usize>().unwrap();
-    return (given_doors, 5);
+    match chance[1].trim().parse::<usize>() {
+        Ok(given_doors) => {
+            return (given_doors, 5);
+        },
+        Err(e) => {
+            panic!("IO Error: {e}");
+        }
+    }
 }
 
 fn doors_and_rooms(chance: &Vec<&str>) -> (usize, usize) {

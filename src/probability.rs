@@ -9,12 +9,12 @@ pub fn game_length_chance_percent(win_count: usize, given: usize) -> f64 {
 }
 
 pub fn map_range(max_s: f64, rang: (f64, f64), current: f64, scale: Option<f64>) -> (f64, f64) {
-    let sf: f64 = match scale {
-        Some(_) => scale.unwrap(),
+    let scale: f64 = match scale {
+        Some(s) => s,
         None => 1.0,
     };
 
-    ((rang.0 + current * (rang.1 - rang.0) / max_s) * sf, current)
+    ((rang.0 + current * (rang.1 - rang.0) / max_s) * scale, current)
 }
 
 pub fn barz(vals: f64, label: f64) -> String {
